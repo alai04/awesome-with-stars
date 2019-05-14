@@ -11,6 +11,7 @@ const (
 	dbName         = "github"
 	collectionName = "awesome"
 	mongoURL       = "mongodb://mongo_user:mongo_secret@localhost:27017/github?authSource=admin"
+	mongoURLTest   = "mongodb://mongo_user:mongo_secret@localhost:27017/github_test?authSource=admin"
 )
 
 // GetCollectionName return collectionName
@@ -30,7 +31,7 @@ func (s MongoStore) Save(r RepoInfo) error {
 	defer session.Close()
 	coll := session.DB("").C(collectionName)
 
-	_, err := coll.Upsert(bson.M{"full_name": r.FullName}, r)
+	_, err := coll.Upsert(bson.M{"fullname": r.FullName}, r)
 	if err != nil {
 		log.Printf("Upsert to MongoDB error: %v", err)
 		return err
@@ -44,20 +45,24 @@ func (s MongoStore) Load(r *RepoInfo) error {
 	defer session.Close()
 	coll := session.DB("").C(collectionName)
 
-	err := coll.Find(bson.M{"full_name": r.FullName}).One(&r)
+	err := coll.Find(bson.M{"fullname": r.FullName}).One(&r)
 	if err != nil {
 		log.Printf("Find in MongoDB error: %v", err)
 	}
 	return err
 }
 
-func newMongoSession() (*mgo.Session, error) {
-	return mgo.Dial(mongoURL)
+func newMongoSession(url string) (*mgo.Session, error) {
+	return mgo.Dial(url)
 }
 
 // NewMongoStore return a PRSaver use MongoDB
-func NewMongoStore() RepoInfoStore {
-	session, err := newMongoSession()
+func NewMongoStore(test bool) RepoInfoStore {
+	url := mongoURL
+	if test {
+		url = mongoURLTest
+	}
+	session, err := newMongoSession(url)
 	if err != nil {
 		log.Fatalf("Could not connect to the database: %v\n", err)
 	}

@@ -15,7 +15,7 @@ func main() {
 	end := time.Now()
 	fmt.Printf("Duration: %v\n", end.Sub(start))
 
-	store := NewMongoStore()
+	store := NewMongoStore(false)
 	for _, rInfo := range rInfos {
 		store.Save(rInfo)
 	}

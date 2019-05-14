@@ -13,3 +13,4 @@
 
 # Template or temporary file
 /temp/
+.DS_Store
