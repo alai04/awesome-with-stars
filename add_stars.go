@@ -79,7 +79,9 @@ func getReposInfo(repos []string) (reposInfo []RepoInfo) {
 	for nFinished < maxWorkers {
 		rInfo := <-chResult
 		fmt.Println(rInfo)
-		reposInfo = append(reposInfo, rInfo)
+		if rInfo.ID > 0 {
+			reposInfo = append(reposInfo, rInfo)
+		}
 	}
 	return
 }

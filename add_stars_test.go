@@ -7,13 +7,21 @@ const (
 	awesomeWrong1 = "avelino2/awesome-go"
 )
 
-func TestGetRepoListFromREADME(t *testing.T) {
+func TestGetReposInfo(t *testing.T) {
 	rList, err := getRepoListFromREADME(awesome1)
 	if err != nil {
 		t.Errorf("Get repo list from %s error: %v", awesome1, err)
+		return
 	}
 	if len(rList) < 100 {
 		t.Errorf("Repos in %s is too less, only %d repos found", awesome1, len(rList))
+		return
+	}
+
+	const nTestRepos = 10
+	rInfos := getReposInfo(rList[:nTestRepos])
+	if len(rInfos) != nTestRepos {
+		t.Errorf("Request %d repos info, but get %d", nTestRepos, len(rInfos))
 	}
 }
 
