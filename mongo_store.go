@@ -1,10 +1,9 @@
 package main
 
 import (
-	"log"
-
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -31,7 +30,7 @@ func (s MongoStore) Save(r RepoInfo) error {
 	defer session.Close()
 	coll := session.DB("").C(collectionName)
 
-	_, err := coll.Upsert(bson.M{"fullname": r.FullName}, r)
+	_, err := coll.Upsert(bson.M{"reponame": r.RepoName}, r)
 	if err != nil {
 		log.Printf("Upsert to MongoDB error: %v", err)
 		return err
@@ -44,10 +43,11 @@ func (s MongoStore) Load(r *RepoInfo) error {
 	session := s.session.Copy()
 	defer session.Close()
 	coll := session.DB("").C(collectionName)
+	// collation := mgo.Collation{Locale: "en", Strength: 1}
 
-	err := coll.Find(bson.M{"fullname": r.FullName}).One(&r)
+	err := coll.Find(bson.M{"reponame": r.RepoName}).One(&r)
 	if err != nil {
-		log.Printf("Find in MongoDB error: %v", err)
+		log.Printf("Find %s in MongoDB error: %v", r.FullName, err)
 	}
 	return err
 }
