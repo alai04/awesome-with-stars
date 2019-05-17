@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"os"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -24,7 +25,7 @@ func getInfoOfRepo(repo string) (rInfo RepoInfo, err error) {
 	if err != nil {
 		return
 	}
-	req.Header.Add("Authorization", "token 069b5aa093a46f6dd7f5b5026e173b0ef8ee0c9f")
+	req.Header.Add("Authorization", "token "+os.Getenv("GITHUB_TOKEN")) //85c75c2e5ca6e7337b1fe87b5d9c254385bd0e0a")
 
 	client := &http.Client{}
 	res, err := client.Do(req)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -15,18 +16,21 @@ func newServer() *negroni.Negroni {
 	n := negroni.Classic()
 	mx := mux.NewRouter()
 	mx.Handle("/assets/", http.StripPrefix("/assets", http.FileServer(gfmstyle.Assets)))
-	mx.HandleFunc("/readme/{repo}", readmeHandler).Methods("GET")
+	mx.HandleFunc("/readme/{user}/{repo}", readmeHandler).Methods("GET")
 	n.UseHandler(mx)
 	return n
 }
 
 func readmeHandler(w http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	repo := vars["repo"]
-	log.Printf("GET readme of %s", repo)
-	b, err := ioutil.ReadFile("output/README.md")
+	repo := fmt.Sprintf("%s/%s", vars["user"], vars["repo"])
+	log.Infof("GET readme of %s", repo)
+	b, err := ioutil.ReadFile(filename(repo))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		msg := fmt.Sprintf("%s\nRetry after minutes ...", err.Error())
+		prepareGetREADME(repo)
+		http.Error(w, msg, http.StatusNotFound)
+		return
 	}
 	w.Write(github_flavored_markdown.Markdown(b))
 }

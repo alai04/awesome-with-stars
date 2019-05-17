@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -27,21 +26,6 @@ func main() {
 	// addStarsToREADME("vinta/awesome-python")
 
 	runServer()
-}
-
-func saveRepoInfos(awesomerepo string) {
-	rList, _ := getRepoListFromREADME(awesomerepo)
-	log.Debugf("There are %d repos in README file", len(rList))
-	start := time.Now()
-	fmt.Printf("Start at: %v\n", start)
-	rInfos := getReposInfo(rList)
-	end := time.Now()
-	fmt.Printf("Duration: %v\n", end.Sub(start))
-
-	store := NewMongoStore(false)
-	for _, rInfo := range rInfos {
-		store.Save(rInfo)
-	}
 }
 
 func runServer() {
