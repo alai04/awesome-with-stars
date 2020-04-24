@@ -25,6 +25,7 @@ func main() {
 	// saveRepoInfos("vinta/awesome-python")
 	// addStarsToREADME("vinta/awesome-python")
 
+	fmt.Println("open http://localhost/readme/avelino/awesome-go or http://localhost/readme/vinta/awesome-python")
 	runServer()
 }
 
